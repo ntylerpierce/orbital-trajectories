@@ -29,6 +29,30 @@ const CANVAS_SIZE    = 620;
 const FLYBY_SIZE     = 260;
 const MAX_VISIBLE_AU = 2.05;
 
+// Real Earth–Mars–Earth free-return mission opportunities, sorted by total ΔV
+const PRESET_TRAJECTORIES = [
+    { dep:'2033-01-11', arr:'2033-09-08', ret:'2034-05-22', days:496, dv:5.17 },
+    { dep:'2033-04-01', arr:'2033-09-24', ret:'2034-06-23', days:448, dv:5.55 },
+    { dep:'2033-04-17', arr:'2033-09-24', ret:'2034-06-23', days:432, dv:5.58 },
+    { dep:'2033-05-03', arr:'2033-09-24', ret:'2034-06-23', days:416, dv:5.77 },
+    { dep:'2035-03-22', arr:'2035-11-01', ret:'2036-07-30', days:496, dv:5.86 },
+    { dep:'2031-02-23', arr:'2031-08-18', ret:'2032-04-30', days:432, dv:5.88 },
+    { dep:'2035-05-25', arr:'2035-11-17', ret:'2036-08-31', days:464, dv:6.06 },
+    { dep:'2033-05-19', arr:'2033-09-24', ret:'2034-06-23', days:400, dv:6.14 },
+    { dep:'2028-11-13', arr:'2029-08-12', ret:'2030-03-24', days:496, dv:6.36 },
+    { dep:'2031-03-11', arr:'2031-09-03', ret:'2032-04-30', days:416, dv:6.38 },
+    { dep:'2035-07-12', arr:'2035-12-19', ret:'2036-09-16', days:432, dv:6.62 },
+    { dep:'2033-06-04', arr:'2033-10-10', ret:'2034-06-23', days:384, dv:6.65 },
+    { dep:'2035-07-28', arr:'2035-12-19', ret:'2036-09-16', days:416, dv:6.88 },
+    { dep:'2028-12-31', arr:'2029-08-28', ret:'2030-04-09', days:464, dv:6.98 },
+];
+
+const PRESET_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function fmtPresetDate(s) {
+    const [y, m, d] = s.split('-').map(Number);
+    return `${PRESET_MONTHS[m-1]} ${d}, ${y}`;
+}
+
 // ─── DOM refs ─────────────────────────────────────────────────────────────────
 let mainCanvas, mainCtx, flybyCanvas, flybyCtx;
 let playBtn, scrubber, timeDisplay;
@@ -65,6 +89,42 @@ window.addEventListener('load', () => {
     document.getElementById('traj-form').addEventListener('submit', onSubmit);
     playBtn.addEventListener('click', togglePlay);
     scrubber.addEventListener('input', onScrub);
+
+    // Preset trajectories dropdown
+    const presetSel = document.getElementById('preset-select');
+    const presetWindows = [
+        { label: '2028–2030 window', test: s => s < '2030' },
+        { label: '2031–2032 window', test: s => s >= '2031' && s < '2033' },
+        { label: '2033–2034 window', test: s => s >= '2033' && s < '2035' },
+        { label: '2035–2036 window', test: s => s >= '2035' },
+    ];
+    for (const win of presetWindows) {
+        const rows = PRESET_TRAJECTORIES.filter(p => win.test(p.dep));
+        if (!rows.length) continue;
+        const og = document.createElement('optgroup');
+        og.label = win.label;
+        for (const p of rows) {
+            const opt = document.createElement('option');
+            opt.value = `${p.dep}|${p.arr}|${p.ret}`;
+            opt.textContent = `${fmtPresetDate(p.dep)} → ${fmtPresetDate(p.ret)} (${p.days} days, ΔV ${p.dv.toFixed(2)} km/s)`;
+            og.appendChild(opt);
+        }
+        presetSel.appendChild(og);
+    }
+    presetSel.addEventListener('change', () => {
+        if (!presetSel.value) return;
+        const [dep, arr, ret] = presetSel.value.split('|');
+        document.getElementById('dep-date').value = dep;
+        document.getElementById('arr-date').value = arr;
+        document.getElementById('ret-date').value = ret;
+        document.getElementById('mission-mode').value = 'freereturn';
+        onModeChange();
+    });
+    ['dep-date', 'arr-date', 'ret-date'].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+            if (presetSel.value) presetSel.value = '';
+        });
+    });
 
     drawIdleCanvas();
 
