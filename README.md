@@ -2,7 +2,7 @@
 
 An interactive web app that computes and animates real Earth-to-Mars transfer trajectories from user-supplied dates. Enter a departure date and Mars arrival date (and optionally an Earth return date for a free-return trajectory), and the app solves the actual orbital mechanics — not a lookup table.
 
-**Live demo:** [deployed on Vercel](#) <!-- update after deploy -->
+**Live demo:** https://orbital-trajectories.vercel.app
 
 ## Physics
 
