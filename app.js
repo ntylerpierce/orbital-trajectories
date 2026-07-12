@@ -29,6 +29,10 @@ const CANVAS_SIZE    = 620;
 const FLYBY_SIZE     = 260;
 const MAX_VISIBLE_AU = 2.05;
 
+// SVG icon strings — both use the same 12×12 viewBox so flex centering is purely structural
+const PLAY_SVG  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" width="12" height="12" fill="white" aria-hidden="true"><polygon points="3,0 3,12 12,6"/></svg>';
+const PAUSE_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" width="12" height="12" fill="white" aria-hidden="true"><rect x="1" y="0" width="4" height="12"/><rect x="7" y="0" width="4" height="12"/></svg>';
+
 // Real Earth–Mars–Earth free-return mission opportunities, sorted by total ΔV
 const PRESET_TRAJECTORIES = [
     { dep:'2033-01-11', arr:'2033-09-08', ret:'2034-05-22', days:496, dv:5.17 },
@@ -184,7 +188,7 @@ function onSubmit(e) {
     playing   = false;
     animProg  = 0;
     trailPts  = [];
-    playBtn.textContent = '▶';
+    playBtn.innerHTML = PLAY_SVG;
     scrubber.value = 0;
     if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
 
@@ -203,7 +207,7 @@ function showError(msg) {
 function startAnimation() {
     playing   = true;
     lastTime  = null;
-    playBtn.textContent = '⏸';
+    playBtn.innerHTML = PAUSE_SVG;
     animProg  = 0;
     trailPts  = [];
     rafId = requestAnimationFrame(animLoop);
@@ -212,7 +216,7 @@ function startAnimation() {
 function togglePlay() {
     if (!traj) return;
     playing = !playing;
-    playBtn.textContent = playing ? '⏸' : '▶';
+    playBtn.innerHTML = playing ? PAUSE_SVG : PLAY_SVG;
     if (playing) {
         lastTime = null;
         rafId = requestAnimationFrame(animLoop);
@@ -236,7 +240,7 @@ function animLoop(ts) {
     drawFrame(animProg);
     if (animProg >= 1) {
         playing = false;
-        playBtn.textContent = '▶';
+        playBtn.innerHTML = PLAY_SVG;
         return;
     }
     rafId = requestAnimationFrame(animLoop);

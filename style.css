@@ -213,7 +213,6 @@ header .subtitle {
     flex-shrink: 0;
     transition: background 0.15s;
     line-height: 1;
-    padding-left: 2px;
 }
 #play-pause:hover { background: #1d4ed8; }
 
