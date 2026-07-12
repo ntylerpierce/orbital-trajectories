@@ -95,8 +95,14 @@ function onSubmit(e) {
         return;
     }
 
-    const result = computeTrajectory({ departureStr: dep, arrivalStr: arr,
-                                       returnStr: mode === 'freereturn' ? ret : null, mode });
+    let result;
+    try {
+        result = computeTrajectory({ departureStr: dep, arrivalStr: arr,
+                                     returnStr: mode === 'freereturn' ? ret : null, mode });
+    } catch (err) {
+        showError('Internal error: ' + err.message);
+        return;
+    }
 
     if (result.error) { showError(result.error); return; }
 
@@ -127,7 +133,7 @@ function onSubmit(e) {
     updateFlybyWrap();
     drawFrame(0);
     startAnimation();
-});
+}
 
 function showError(msg) {
     messagesDiv.innerHTML = `<div class="msg-error">✖ ${msg}</div>`;

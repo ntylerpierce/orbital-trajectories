@@ -341,7 +341,7 @@ function buildHyperbolicArc(flyby, nPts = 120) {
     const e2   = vecScale(e2t, mirror);
 
     function to3D(x2, y2) {
-        return [e1[0]*x2 + e2[0]*y2, e1[1]*x2 + e2[1]*y2, e1[2]*x2 + e2[2]*y2];
+        return [e2[0]*x2 + e1[0]*y2, e2[1]*x2 + e1[1]*y2, e2[2]*x2 + e1[2]*y2];
     }
 
     const nu_start = -nu_soi * 0.9998;
