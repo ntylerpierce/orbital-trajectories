@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earth–Mars Trajectory Builder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+    <header>
+        <h1>Earth–Mars Trajectory Builder</h1>
+        <span class="subtitle">Real orbital mechanics · JPL ephemeris · Lambert solver</span>
+    </header>
+
+    <div id="main-layout">
+        <!-- ── Left panel ── -->
+        <div id="left-panel">
+            <div id="form-section">
+                <h2>Mission Parameters</h2>
+                <form id="traj-form" autocomplete="off">
+                    <div class="form-group">
+                        <label for="dep-date">Earth Departure Date</label>
+                        <input type="date" id="dep-date" min="1800-01-01" max="2050-12-31" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="arr-date">Mars Arrival Date</label>
+                        <input type="date" id="arr-date" min="1800-01-01" max="2050-12-31" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mission-mode">Mission Mode</label>
+                        <select id="mission-mode">
+                            <option value="oneway">One-way transfer (Earth → Mars)</option>
+                            <option value="freereturn">Free-return (Earth → Mars → Earth)</option>
+                        </select>
+                    </div>
+
+                    <div id="return-section" class="hidden">
+                        <div class="form-group">
+                            <label for="ret-date">Earth Return Date</label>
+                            <input type="date" id="ret-date" min="1800-01-01" max="2050-12-31">
+                        </div>
+                        <div class="form-group">
+                            <label>Flyby Altitude</label>
+                            <div class="radio-row" style="margin-bottom:6px;">
+                                <label>
+                                    <input type="radio" name="altitude-mode" value="auto" checked>
+                                    Auto-solve from geometry
+                                </label>
+                                <label>
+                                    <input type="radio" name="altitude-mode" value="manual">
+                                    Manual override
+                                </label>
+                            </div>
+                            <input type="number" id="altitude-manual" class="hidden"
+                                   placeholder="Altitude (km)" min="150" step="10">
+                            <div id="altitude-note" class="hidden" style="font-size:11px;color:#8892aa;margin-top:4px;">
+                                Note: manual altitude is displayed as info only — trajectory uses the geometrically required value.
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="compute-btn">Compute &amp; Animate</button>
+                </form>
+            </div>
+
+            <div id="messages"></div>
+
+            <div id="info-panel" class="hidden"></div>
+        </div>
+
+        <!-- ── Right panel ── -->
+        <div id="right-panel">
+            <div id="canvas-wrap">
+                <canvas id="main-canvas"></canvas>
+                <div id="controls">
+                    <button id="play-pause" title="Play / Pause">▶</button>
+                    <input type="range" id="scrubber" min="0" max="1000" value="0">
+                    <span id="time-display">—</span>
+                </div>
+            </div>
+
+            <div id="flyby-wrap" class="hidden">
+                <div id="flyby-label">Mars Flyby (hyperbolic arc, relative to Mars)</div>
+                <canvas id="flyby-canvas"></canvas>
+            </div>
+
+            <details id="debug-panel">
+                <summary>Validation / Debug</summary>
+                <div id="debug-content"></div>
+            </details>
+        </div>
+    </div>
+</div>
+
+<script src="physics.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
