@@ -550,18 +550,12 @@ function drawFlybyInset(prog) {
 
     if (!traj || traj.mode !== 'freereturn' || !traj.hyp_arc || traj.hyp_arc.length < 2) return;
 
-    // Scale: show ±1.5 * SOI
-    const sc = (W/2 - 15) / (R_SOI_MARS * 1.1);
+    // Zoom to ~2.5× periapsis distance so Mars and the close-approach arc are both clearly visible
+    const flyby = traj.flyby;
+    const sc = (W/2 - 10) / (flyby.r_p * 2.5);
 
-    // SOI circle
-    ctx.strokeStyle = 'rgba(100,120,180,0.3)';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([4, 4]);
-    drawCircle(ctx, cx, cy, R_SOI_MARS * sc);
-    ctx.setLineDash([]);
-
-    // Mars
-    const mR = 14;
+    // Mars — radius uses the same scale as the trajectory arc (R_MARS defined in physics.js)
+    const mR = R_MARS * sc;
     const mg = ctx.createRadialGradient(cx, cy, 1, cx, cy, mR*2);
     mg.addColorStop(0, '#ef7c4e');
     mg.addColorStop(1, 'rgba(0,0,0,0)');
@@ -614,8 +608,7 @@ function drawFlybyInset(prog) {
         }
     }
 
-    // Periapsis direction marker (will appear near/inside Mars circle at this scale)
-    const flyby = traj.flyby;
+    // Periapsis direction marker
     const bisect = vecNorm(vecAdd(flyby.u_in, flyby.u_out));
     const [bpx, bpy] = toCanvas(bisect[0]*flyby.r_p, bisect[1]*flyby.r_p, cx, cy, sc);
     ctx.fillStyle = '#a0f0a0';
@@ -625,8 +618,6 @@ function drawFlybyInset(prog) {
 
     // Labels
     ctx.font = '10px Segoe UI, sans-serif';
-    ctx.fillStyle = 'rgba(120,140,180,0.8)';
-    ctx.fillText('SOI', cx + R_SOI_MARS*sc - 24, cy - 4);
     ctx.fillStyle = '#a0f0a0';
     ctx.fillText(`r_p: ${(flyby.altitude+R_MARS).toFixed(0)} km`, 6, H-8);
     ctx.fillStyle = CLR.flyby;
