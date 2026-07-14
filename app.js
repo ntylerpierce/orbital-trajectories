@@ -480,7 +480,7 @@ function drawFrame(prog) {
             const f   = (prog - pa) / (1 - pa);
             const t_soi_days = t.flyby.t_soi / 86400;
             currentJD = t.jd_arr + t_soi_days + f * (t.tof_ret_days - t_soi_days);
-            const dt  = t.flyby.t_soi + f * (t.tof_ret_days * 86400 - t.flyby.t_soi);
+            const dt  = f * t.tof_ret_days * 86400;
             scPos     = keplerPropagate(t.mars_arr.r, t.v_sc_dep2, dt).r;
         }
     }
