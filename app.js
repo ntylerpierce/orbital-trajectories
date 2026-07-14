@@ -474,12 +474,13 @@ function drawFrame(prog) {
             const marsPos = t.mars_arr.r;
             const pt  = t.hyp_arc[Math.min(arcIdx, t.hyp_arc.length - 1)];
             scPos     = vecAdd(marsPos, pt);
-            currentJD = t.jd_arr + (f - 0.5) * (2 * t.flyby.t_soi / 86400);
+            currentJD = t.jd_arr + f * (t.flyby.t_soi / 86400);
         } else {
             phase     = 'ret';
             const f   = (prog - pa) / (1 - pa);
-            currentJD = t.jd_arr + f * t.tof_ret_days;
-            const dt  = f * t.tof_ret_days * 86400;
+            const t_soi_days = t.flyby.t_soi / 86400;
+            currentJD = t.jd_arr + t_soi_days + f * (t.tof_ret_days - t_soi_days);
+            const dt  = t.flyby.t_soi + f * (t.tof_ret_days * 86400 - t.flyby.t_soi);
             scPos     = keplerPropagate(t.mars_arr.r, t.v_sc_dep2, dt).r;
         }
     }
