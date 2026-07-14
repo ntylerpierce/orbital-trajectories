@@ -608,14 +608,6 @@ function drawFlybyInset(prog) {
         }
     }
 
-    // Periapsis direction marker
-    const bisect = vecNorm(vecAdd(flyby.u_in, flyby.u_out));
-    const [bpx, bpy] = toCanvas(bisect[0]*flyby.r_p, bisect[1]*flyby.r_p, cx, cy, sc);
-    ctx.fillStyle = '#a0f0a0';
-    ctx.beginPath();
-    ctx.arc(bpx, bpy, 3, 0, Math.PI*2);
-    ctx.fill();
-
     // Labels
     ctx.font = '10px Segoe UI, sans-serif';
     ctx.fillStyle = '#a0f0a0';
